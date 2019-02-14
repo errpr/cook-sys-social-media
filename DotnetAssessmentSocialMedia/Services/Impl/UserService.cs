@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace DotnetAssessmentSocialMedia.Services
+namespace DotnetAssessmentSocialMedia.Services.Impl
 {
     public class UserService : IUserService
     {
@@ -67,27 +67,28 @@ namespace DotnetAssessmentSocialMedia.Services
             return user;
         }
 
-        public User DeleteUser(string username, CredentialsDto credentials)
+        public User DeleteUser(string username, Credentials credentials)
         {
             // Get user if username matches and user is not deleted
-            var user = _context.Users
-                .SingleOrDefault(u => u.Credentials.Username == username
-                                      && !u.Deleted);
+            var user = GetByUsername(username);
+            ValidateCredentialsForUser(credentials, user);
 
-            if (user == null)
-            {
-                throw new UserNotFoundException();
-            }
+            user.Deleted = true;
+            _context.SaveChanges();
+            return user;
+        }
 
+        /// <summary>
+        ///     Throws if credentials are not valid for given user.
+        /// </summary>
+        /// <exception cref="InvalidCredentialsException">InvalidCredentialsException</exception>
+        public void ValidateCredentialsForUser(Credentials credentials, User user)
+        {
             if (user.Credentials.Username != credentials.Username
                 || user.Credentials.Password != credentials.Password)
             {
                 throw new InvalidCredentialsException();
             }
-
-            user.Deleted = true;
-            _context.SaveChanges();
-            return user;
         }
     }
 }

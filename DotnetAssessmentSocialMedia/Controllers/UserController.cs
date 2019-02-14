@@ -62,8 +62,17 @@ namespace DotnetAssessmentSocialMedia.Controllers
         [ProducesResponseType(404)]
         public UserResponseDto Delete(string username, [FromBody] CredentialsDto credentialsDto)
         {
-            var credentials = _mapper.Map<CredentialsDto>(credentialsDto);
+            var credentials = _mapper.Map<Credentials>(credentialsDto);
             return _mapper.Map<UserResponseDto>(_userService.DeleteUser(username, credentials));
         }
+
+        // PATCH api/users/@{username}
+        /*
+        [HttpPatch("@{username}")]
+        public UserResponseDto Patch(string username, [FromBody] PatchUserDto patchUserDto)
+        {
+            var credentials = _mapper.Map<Credentials>(patchUserDto.Credentials);
+        }
+        */
     }
 }

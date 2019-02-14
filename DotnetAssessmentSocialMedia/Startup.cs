@@ -2,6 +2,7 @@
 using DotnetAssessmentSocialMedia.Data;
 using DotnetAssessmentSocialMedia.Exception;
 using DotnetAssessmentSocialMedia.Services;
+using DotnetAssessmentSocialMedia.Services.Impl;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,7 @@ namespace DotnetAssessmentSocialMedia
 
             // Add dependencies to IoC container
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IHashtagService, HashtagService>();
 
             // Seeder used in Program.cs for development
             services.AddScoped<Seeder>();

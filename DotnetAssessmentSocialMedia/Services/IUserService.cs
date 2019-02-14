@@ -9,6 +9,7 @@ namespace DotnetAssessmentSocialMedia.Services
         User GetByUsername(string username);
         IEnumerable<User> GetAll();
         User CreateUser(User user);
-        User DeleteUser(string username, CredentialsDto credentials);
+        User DeleteUser(string username, Credentials credentials);
+        void ValidateCredentialsForUser(Credentials credentials, User user);
     }
 }
