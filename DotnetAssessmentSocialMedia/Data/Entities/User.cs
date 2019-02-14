@@ -19,6 +19,6 @@ namespace DotnetAssessmentSocialMedia.Data.Entities
         public DateTime Joined { get; set; }
 
         [Column("deleted")]
-        public Boolean Deleted { get; set; }
+        public bool Deleted { get; set; }
     }
 }

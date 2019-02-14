@@ -32,5 +32,8 @@ namespace DotnetAssessmentSocialMedia.Data.Entities
         [ForeignKey("tweet")]
         [Column("repost_of_id")]
         public int? RepostOf { get; set; }
+
+        [Column("deleted")]
+        public bool Deleted { get; set; }
     }
 }

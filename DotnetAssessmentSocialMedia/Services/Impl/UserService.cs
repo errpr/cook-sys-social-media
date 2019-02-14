@@ -23,6 +23,20 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             _logger = logger;
         }
 
+        /// <summary>
+        ///     Throws if credentials are not valid for given user.
+        /// </summary>
+        /// <exception cref="InvalidCredentialsException">InvalidCredentialsException</exception>
+        public void ValidateCredentialsForUser(Credentials credentials, User user)
+        {
+            if (user.Credentials.Username != credentials.Username
+                || user.Credentials.Password != credentials.Password)
+            {
+                throw new InvalidCredentialsException();
+            }
+        }
+        
+        /// <exception cref="UserNotFoundException"></exception>
         public User GetByUsername(string username)
         {
             var user = _context.Users.SingleOrDefault(u => u.Credentials.Username == username);
@@ -78,17 +92,15 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             return user;
         }
 
-        /// <summary>
-        ///     Throws if credentials are not valid for given user.
-        /// </summary>
-        /// <exception cref="InvalidCredentialsException">InvalidCredentialsException</exception>
-        public void ValidateCredentialsForUser(Credentials credentials, User user)
+        public User UpdateUserProfile(string username, Profile userProfile, Credentials credentials)
         {
-            if (user.Credentials.Username != credentials.Username
-                || user.Credentials.Password != credentials.Password)
-            {
-                throw new InvalidCredentialsException();
-            }
+            var user = GetByUsername(username);
+            ValidateCredentialsForUser(credentials, user);
+
+            user.Profile = userProfile;
+            _context.Update(user);
+            _context.SaveChanges();
+            return user;
         }
     }
 }

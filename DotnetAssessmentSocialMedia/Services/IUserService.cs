@@ -11,5 +11,6 @@ namespace DotnetAssessmentSocialMedia.Services
         User CreateUser(User user);
         User DeleteUser(string username, Credentials credentials);
         void ValidateCredentialsForUser(Credentials credentials, User user);
+        User UpdateUserProfile(string username, Profile userProfile, Credentials credentials);
     }
 }

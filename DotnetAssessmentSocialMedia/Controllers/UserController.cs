@@ -67,12 +67,13 @@ namespace DotnetAssessmentSocialMedia.Controllers
         }
 
         // PATCH api/users/@{username}
-        /*
         [HttpPatch("@{username}")]
         public UserResponseDto Patch(string username, [FromBody] PatchUserDto patchUserDto)
         {
             var credentials = _mapper.Map<Credentials>(patchUserDto.Credentials);
+            var userProfile = _mapper.Map<Data.Entities.Profile>(patchUserDto.Profile);
+            var returnedUser = _userService.UpdateUserProfile(username, userProfile, credentials);
+            return _mapper.Map<UserResponseDto>(returnedUser);
         }
-        */
     }
 }
