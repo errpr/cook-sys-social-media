@@ -114,9 +114,7 @@ namespace DotnetAssessmentSocialMedia.Controllers
         {
             return _mapper.Map<IEnumerable<UserResponseDto>>(_tweetService.GetLikes(id)).ToList();
         }
-
-
-        // TODO
+        
         [HttpGet("{id}/context")]
         [ProducesResponseType(404)]
         public ActionResult<ContextDto> GetContext(int id)

@@ -7,8 +7,8 @@ namespace DotnetAssessmentSocialMedia.Dtos
 {
     public class ContextDto
     {
-        TweetDto Target { get; set; }
-        List<TweetDto> Before { get; set; }
-        List<TweetDto> After { get; set; }
+        public TweetDto Target { get; set; }
+        public IEnumerable<TweetDto> Before { get; set; }
+        public IEnumerable<TweetDto> After { get; set; }
     }
 }

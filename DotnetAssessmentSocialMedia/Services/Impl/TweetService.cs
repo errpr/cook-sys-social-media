@@ -226,13 +226,13 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
                 .Include(t => t.Author)
                 .Where(t => ancestorIds.Contains(t.Id) && !t.Deleted)
                 .ToList();
-            before.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
+            before.Sort((a, b) => DateTime.Compare(a.Posted, b.Posted));
 
             var after = _context.Tweets
                 .Include(t => t.Author)
                 .Where(t => childIds.Contains(t.Id) && !t.Deleted)
                 .ToList();
-            after.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
+            after.Sort((a, b) => DateTime.Compare(a.Posted, b.Posted));
 
             return new Context()
             {

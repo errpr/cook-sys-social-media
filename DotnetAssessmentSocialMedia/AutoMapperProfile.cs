@@ -1,3 +1,4 @@
+using DotnetAssessmentSocialMedia.Data;
 using DotnetAssessmentSocialMedia.Data.Entities;
 using DotnetAssessmentSocialMedia.Dtos;
 using Profile = AutoMapper.Profile;
@@ -17,11 +18,9 @@ namespace DotnetAssessmentSocialMedia
                 .ForAllOtherMembers(opts => opts.Ignore());
 
             // TODO possibly should map from the TweetHashtags list instead of parsing each time
-            CreateMap<Tweet, TweetDto>()
-                .ForMember(
-                    dest => dest.Hashtags,
-                    opt => opt.MapFrom(src => src.ParseTags())
-                );
+            CreateMap<Tweet, TweetDto>();
+
+            CreateMap<Context, ContextDto>();
 
             CreateMap<Hashtag, HashtagDto>();
 
