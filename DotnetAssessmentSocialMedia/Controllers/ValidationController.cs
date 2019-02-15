@@ -56,7 +56,7 @@ namespace DotnetAssessmentSocialMedia.Controllers
         [HttpGet("username/available/{username}")]
         public ActionResult<bool> CheckUsernameAvailable(string username)
         {
-            return !CheckUsernameExists(username).Value;
+            return _userService.CheckUsernameAvailable(username);
         }
     }
 }
