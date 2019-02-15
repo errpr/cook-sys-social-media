@@ -213,5 +213,10 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             result.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
             return result;
         }
+
+        public bool CheckUsernameAvailable(string username)
+        {
+            return _context.Users.Any(u => u.Credentials.Username == username);
+        }
     }
 }

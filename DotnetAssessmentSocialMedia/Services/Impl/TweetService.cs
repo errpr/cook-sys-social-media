@@ -100,6 +100,12 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
 
             _context.Tweets.Add(tweet);
             _context.SaveChanges();
+
+            if (repostOf != null)
+            {
+                return tweet;
+            }
+
             foreach(var label in tweet.ParseTags())
             {
                 _hashtagService.UpsertHashtag(label, tweet);

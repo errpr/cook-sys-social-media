@@ -16,8 +16,7 @@ namespace DotnetAssessmentSocialMedia
 
             CreateMap<CreateTweetDto, TweetDto>()
                 .ForAllOtherMembers(opts => opts.Ignore());
-
-            // TODO possibly should map from the TweetHashtags list instead of parsing each time
+            
             CreateMap<Tweet, TweetDto>();
 
             CreateMap<Context, ContextDto>();

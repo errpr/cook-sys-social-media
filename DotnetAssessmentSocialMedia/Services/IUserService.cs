@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using DotnetAssessmentSocialMedia.Data.Entities;
 using DotnetAssessmentSocialMedia.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetAssessmentSocialMedia.Services
 {
@@ -19,5 +20,6 @@ namespace DotnetAssessmentSocialMedia.Services
         IEnumerable<User> GetFollowedUsers(string username);
         IEnumerable<User> GetFollowers(string username);
         IEnumerable<Tweet> GetUserMentions(string username);
+        bool CheckUsernameAvailable(string username);
     }
 }
