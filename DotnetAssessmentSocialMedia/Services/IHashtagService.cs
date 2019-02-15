@@ -10,6 +10,7 @@ namespace DotnetAssessmentSocialMedia.Services
     {
         Hashtag GetByLabel(string label);
         IEnumerable<Hashtag> GetAll();
-        Hashtag CreateHashtag(Hashtag hashtag);
+        Hashtag UpsertHashtag(string label, Tweet tweet);
+        IEnumerable<Tweet> GetTaggedTweets(Hashtag hashtag);
     }
 }

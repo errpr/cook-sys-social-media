@@ -60,20 +60,91 @@ namespace DotnetAssessmentSocialMedia.Controllers
         [HttpDelete("@{username}")]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public UserResponseDto Delete(string username, [FromBody] CredentialsDto credentialsDto)
+        public ActionResult<UserResponseDto> Delete(string username, [FromBody] CredentialsDto credentialsDto)
         {
+            if (credentialsDto.Username != username)
+            {
+                return Forbid();
+            }
             var credentials = _mapper.Map<Credentials>(credentialsDto);
-            return _mapper.Map<UserResponseDto>(_userService.DeleteUser(username, credentials));
+            return _mapper.Map<UserResponseDto>(_userService.DeleteUser(credentials));
         }
 
         // PATCH api/users/@{username}
         [HttpPatch("@{username}")]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public UserResponseDto Patch(string username, [FromBody] PatchUserDto patchUserDto)
         {
             var credentials = _mapper.Map<Credentials>(patchUserDto.Credentials);
             var userProfile = _mapper.Map<Data.Entities.Profile>(patchUserDto.Profile);
-            var returnedUser = _userService.UpdateUserProfile(username, userProfile, credentials);
+            var returnedUser = _userService.UpdateUserProfile(userProfile, credentials);
             return _mapper.Map<UserResponseDto>(returnedUser);
+        }
+
+        // POST api/users/@{username}/follow
+        [HttpPost("@{username}/follow")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public ActionResult FollowUser(string usernameToFollow, [FromBody] CredentialsDto credentialsDto)
+        {
+            var credentials = _mapper.Map<Credentials>(credentialsDto);
+            var user = _userService.GetAndValidateUser(credentials);
+            _userService.FollowUser(usernameToFollow, user);
+            return Ok();
+        }
+
+        // POST api/users/@{username}/unfollow
+        [HttpPost("@{username}/unfollow")]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public ActionResult UnfollowUser(string usernameToUnfollow, [FromBody] CredentialsDto credentialsDto)
+        {
+            var credentials = _mapper.Map<Credentials>(credentialsDto);
+            var user = _userService.GetAndValidateUser(credentials);
+            _userService.UnfollowUser(usernameToUnfollow, user);
+            return Ok();
+        }
+
+        // GET api/users/@{username}/feed
+        [HttpGet("@{username}/feed")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<TweetDto>> GetUserFeed(string username)
+        {
+            return _mapper.Map<IEnumerable<TweetDto>>(_userService.GetUserFeed(username)).ToList();
+        }
+
+        // GET api/users/@{username}/tweets
+        [HttpGet("@{username}/tweets")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<TweetDto>> GetUserTweets(string username)
+        {
+            return _mapper.Map<IEnumerable<TweetDto>>(_userService.GetUserTweets(username)).ToList();
+        }
+
+        // GET api/users/@{username}/mentions
+        [HttpGet("@{username}/mentions")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<TweetDto>> GetUserMentions(string username)
+        {
+            return _mapper.Map<IEnumerable<TweetDto>>(_userService.GetUserMentions(username)).ToList();
+        }
+
+        // GET api/users/@{username}/followers
+        [HttpGet("@{username}/followers")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<UserResponseDto>> GetFollowers(string username)
+        {
+            return _mapper.Map<IEnumerable<UserResponseDto>>(_userService.GetFollowers(username)).ToList();
+        }
+
+        // GET api/users/@{username}/following
+        [HttpGet("@{username}/following")]
+        [ProducesResponseType(404)]
+        public ActionResult<IEnumerable<UserResponseDto>> GetFollowing(string username)
+        {
+            return _mapper.Map<IEnumerable<UserResponseDto>>(_userService.GetFollowedUsers(username)).ToList();
         }
     }
 }

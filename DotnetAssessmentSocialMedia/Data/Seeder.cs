@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DotnetAssessmentSocialMedia.Data.Entities;
 using DotnetAssessmentSocialMedia.Services;
 
@@ -7,15 +8,27 @@ namespace DotnetAssessmentSocialMedia.Data
     public class Seeder
     {
         private IUserService _userService;
-
-        public Seeder(IUserService userService)
+        private ITweetService _tweetService;
+        public Seeder(IUserService userService, ITweetService tweetService)
         {
             _userService = userService;
+            _tweetService = tweetService;
         }
 
         public void Seed()
         {
             GenerateUsers(20);
+            GenerateTweets(20);
+        }
+
+        private void GenerateTweets(int count)
+        {
+            var users = _userService.GetAll().ToList();
+            for (var i = 0; i < count; i++)
+            {
+                var fakeTweetContent = $"{GenerateName(GenerateInt(3, 9))} {GenerateName(GenerateInt(3, 9))} #{GenerateName(GenerateInt(5, 12))}";
+                _tweetService.CreateSimpleTweet(users[i], fakeTweetContent);
+            }
         }
 
         private void GenerateUsers(int count)

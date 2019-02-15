@@ -7,33 +7,67 @@ using System.Threading.Tasks;
 
 namespace DotnetAssessmentSocialMedia.Data.Entities
 {
-    [Table("tweet")]
     public class Tweet
     {
-        [Key]
-        [Column("id")]
+        public Tweet()
+        {
+        }
+
+        public Tweet(User author, string content, int? inReplyTo, int? repostOf)
+        {
+            Author = author;
+            Content = content;
+            InReplyTo = inReplyTo;
+            RepostOf = repostOf;
+            Posted = DateTime.Now;
+        }
+
+        public List<string> ParseMentions()
+        {
+            var words = Content.Split(' ');
+            var result = new List<string>();
+            foreach (var word in words)
+            {
+                if (word.StartsWith('@'))
+                {
+                    result.Add(word.Substring(1));
+                }
+            }
+            return result;
+        }
+
+        public List<string> ParseTags()
+        {
+            var words = Content.Split(' ');
+            var result = new List<string>();
+            foreach (var word in words)
+            {
+                if (word.StartsWith('#'))
+                {
+                    result.Add(word.Substring(1));
+                }
+            }
+            return result;
+        }
+
         public int Id { get; set; }
 
         [Required]
-        [Column("author")]
         public User Author { get; set; }
 
         [Required]
-        [Column("posted")]
         public DateTime Posted { get; set; }
         
-        [Column("content")]
         public string Content { get; set; }
 
-        [ForeignKey("tweet")]
-        [Column("replying_to_id")]
+        [ForeignKey("Tweet")]
         public int? InReplyTo { get; set; }
 
-        [ForeignKey("tweet")]
-        [Column("repost_of_id")]
+        [ForeignKey("Tweet")]
         public int? RepostOf { get; set; }
-
-        [Column("deleted")]
+       
         public bool Deleted { get; set; }
+
+        public ICollection<TweetHashtag> TweetHashtags { get; set; }
     }
 }

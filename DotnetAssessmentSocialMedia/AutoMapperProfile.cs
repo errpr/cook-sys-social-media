@@ -12,7 +12,19 @@ namespace DotnetAssessmentSocialMedia
                 .ForMember(dest => dest.Id, opts => opts.Ignore())
                 .ForMember(dest => dest.Joined, opts => opts.Ignore())
                 .ForMember(dest => dest.Deleted, opts => opts.Ignore());
-            
+
+            CreateMap<CreateTweetDto, TweetDto>()
+                .ForAllOtherMembers(opts => opts.Ignore());
+
+            // TODO possibly should map from the TweetHashtags list instead of parsing each time
+            CreateMap<Tweet, TweetDto>()
+                .ForMember(
+                    dest => dest.Hashtags,
+                    opt => opt.MapFrom(src => src.ParseTags())
+                );
+
+            CreateMap<Hashtag, HashtagDto>();
+
             CreateMap<Credentials, CredentialsDto>();
             
             CreateMap<Profile, ProfileDto>();

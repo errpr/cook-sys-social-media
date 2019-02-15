@@ -46,6 +46,7 @@ namespace DotnetAssessmentSocialMedia
             // Add dependencies to IoC container
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IHashtagService, HashtagService>();
+            services.AddTransient<ITweetService, TweetService>();
 
             // Seeder used in Program.cs for development
             services.AddScoped<Seeder>();

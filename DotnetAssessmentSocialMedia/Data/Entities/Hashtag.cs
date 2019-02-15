@@ -1,34 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DotnetAssessmentSocialMedia.Data.Entities
 {
-    [Table("hashtag")]
     public class Hashtag
     {
-        [Required]
-        [Key]
-        [Column("label")]
-        public string Label {
-            get {
-                return Label;
-            }
+        public Hashtag() { }
 
-            set {
-                value.ToLower();
-            }
+        public Hashtag(string label)
+        {
+            Label = label.ToLower();
+            FirstUsed = DateTime.Now;
+            LastUsed = DateTime.Now;
         }
 
+        [Key]
+        public string Label { get; set; }
+
         [Required]
-        [Column("first_used")]
         public DateTime FirstUsed { get; set; }
 
         [Required]
-        [Column("last_used")]
         public DateTime LastUsed { get; set; }
+
+        public List<TweetHashtag> TweetHashtags { get; set; }
     }
 }
