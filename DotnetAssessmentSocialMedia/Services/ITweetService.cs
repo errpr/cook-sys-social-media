@@ -1,8 +1,6 @@
-﻿using DotnetAssessmentSocialMedia.Data.Entities;
-using System;
+﻿using DotnetAssessmentSocialMedia.Data;
+using DotnetAssessmentSocialMedia.Data.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DotnetAssessmentSocialMedia.Services
 {
@@ -20,5 +18,6 @@ namespace DotnetAssessmentSocialMedia.Services
         IEnumerable<Tweet> GetReplies(int id);
         IEnumerable<Tweet> GetReposts(int id);
         IEnumerable<User> GetMentions(int id);
+        Context GetContext(int id);
     }
 }

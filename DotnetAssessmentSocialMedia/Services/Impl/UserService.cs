@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using DotnetAssessmentSocialMedia.Data;
 using DotnetAssessmentSocialMedia.Data.Entities;
-using DotnetAssessmentSocialMedia.Dtos;
 using DotnetAssessmentSocialMedia.Exception.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Npgsql;
 
 namespace DotnetAssessmentSocialMedia.Services.Impl
 {
@@ -42,7 +40,7 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
         {
             var user = _context.Users.SingleOrDefault(u => u.Credentials.Username == username);
 
-            // If user doesn't exists or is deleted, throw UserNotFoundException
+            // If user doesn't exist or is deleted, throw UserNotFoundException
             if (user == null || user.Deleted)
             {
                 throw new UserNotFoundException();
@@ -88,6 +86,7 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             var user = GetAndValidateUser(credentials);
 
             user.Deleted = true;
+            _context.Update(user);
             _context.SaveChanges();
             return user;
         }
@@ -148,8 +147,9 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
         {
             var result = _context.Tweets
                 .Include(t => t.Author)
-                .Where(t => t.Author.Id == user.Id)
+                .Where(t => t.Author.Id == user.Id && !t.Deleted)
                 .ToList();
+
             result.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
             return result;
         }
@@ -162,8 +162,14 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
 
         private IEnumerable<User> GetFollowedUsers(User user)
         {
-            var followedUserIds = _context.Follows.Where(f => f.FollowerUserId == user.Id).Select(f => f.FollowedUserId).ToList();
-            return _context.Users.Where(u => followedUserIds.Contains(u.Id)).ToList();
+            var followedUserIds = _context.Follows
+                .Where(f => f.FollowerUserId == user.Id)
+                .Select(f => f.FollowedUserId)
+                .ToList();
+
+            return _context.Users
+                .Where(u => followedUserIds.Contains(u.Id) && !u.Deleted)
+                .ToList();
         }
 
         public IEnumerable<Tweet> GetUserFeed(string username)
@@ -183,8 +189,15 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
         public IEnumerable<User> GetFollowers(string username)
         {
             var user = GetByUsername(username);
-            var followerUserIds = _context.Follows.Where(f => f.FollowedUserId == user.Id).Select(f => f.FollowerUserId).ToList();
-            return _context.Users.Where(u => followerUserIds.Contains(u.Id)).ToList();
+
+            var followerUserIds = _context.Follows
+                .Where(f => f.FollowedUserId == user.Id)
+                .Select(f => f.FollowerUserId)
+                .ToList();
+
+            return _context.Users
+                .Where(u => followerUserIds.Contains(u.Id) && !u.Deleted)
+                .ToList();
         }
 
         public IEnumerable<Tweet> GetUserMentions(string username)

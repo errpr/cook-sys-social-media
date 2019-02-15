@@ -12,6 +12,7 @@ namespace DotnetAssessmentSocialMedia.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<Mention> Mentions { get; set; }
         public DbSet<Follow> Follows { get; set; }
+        public DbSet<Ancestry> Ancestries { get; set; }
 
         public SocialMediaContext(DbContextOptions<SocialMediaContext> options)
             : base(options) 
@@ -38,6 +39,13 @@ namespace DotnetAssessmentSocialMedia.Data
 
             modelBuilder.Entity<Follow>()
                 .HasKey(follow => new { follow.FollowedUserId, follow.FollowerUserId });
+
+            modelBuilder.Entity<Ancestry>()
+                .HasKey(ancestor => new { ancestor.ChildId, ancestor.AncestorId });
+            modelBuilder.Entity<Ancestry>()
+                .HasIndex("ChildId");
+            modelBuilder.Entity<Ancestry>()
+                .HasIndex("AncestorId");
         }
     }
 }

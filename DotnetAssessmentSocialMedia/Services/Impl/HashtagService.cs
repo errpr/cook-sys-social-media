@@ -46,6 +46,7 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
                         .ThenInclude(t => t.Author)
                 .First(h => h.Label == hashtag.Label)
                 .TweetHashtags
+                    .Where(th => !th.Tweet.Deleted)
                     .Select(th => th.Tweet)
                     .ToList();
         }

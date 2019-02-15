@@ -40,16 +40,51 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             return CreateTweet(author, content, null, null);
         }
 
+        private List<int> GetAncestors(Tweet tweet)
+        {
+            return _context.Ancestries
+                .Where(a => a.ChildId == tweet.Id)
+                .Select(a => a.AncestorId)
+                .ToList();
+        }
+
+        private List<int> GetChildren(Tweet tweet)
+        {
+            return _context.Ancestries
+                .Where(a => a.AncestorId == tweet.Id)
+                .Select(a => a.ChildId)
+                .ToList();
+        }
+
+        private void CreateAncestryForNewReply(Tweet tweetThatWasRepliedTo, Tweet tweetThatIsAReply)
+        {
+            var ancestors = GetAncestors(tweetThatWasRepliedTo);
+            ancestors.Add(tweetThatWasRepliedTo.Id);
+            foreach (var ancestorId in ancestors)
+            {
+                _context.Add(new Ancestry()
+                {
+                    ChildId = tweetThatIsAReply.Id,
+                    AncestorId = ancestorId,
+                });
+            }
+            _context.SaveChanges();
+        }
+
         public Tweet CreateReplyTweet(User author, string content, int inReplyTo)
         {
-            EnsureTweetExists(inReplyTo);
+            var tweetThatWasRepliedTo = GetTweet(inReplyTo);
 
             if (content == null || content == string.Empty)
             {
                 throw new RequiredConstraintViolationException("content");
             }
 
-            return CreateTweet(author, content, inReplyTo, null);
+            var tweetThatIsAReply = CreateTweet(author, content, inReplyTo, null);
+
+            CreateAncestryForNewReply(tweetThatWasRepliedTo, tweetThatIsAReply);
+
+            return tweetThatIsAReply;
         }
 
         public Tweet CreateRepostTweet(User author, int repostOf)
@@ -159,7 +194,7 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
 
             return _context.Tweets
                 .Include(t => t.Author)
-                .Where(t => t.InReplyTo == id)
+                .Where(t => t.InReplyTo == id && !t.Deleted)
                 .ToList();
         }
 
@@ -169,7 +204,7 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
 
             return _context.Tweets
                 .Include(t => t.Author)
-                .Where(t => t.RepostOf == id)
+                .Where(t => t.RepostOf == id && !t.Deleted)
                 .ToList();
         }
 
@@ -178,7 +213,33 @@ namespace DotnetAssessmentSocialMedia.Services.Impl
             EnsureTweetExists(id);
 
             var userIds = _context.Mentions.Where(m => m.TweetId == id).Select(m => m.UserId).ToList();
-            return _context.Users.Where(u => userIds.Contains(u.Id)).ToList();
+            return _context.Users.Where(u => userIds.Contains(u.Id) && !u.Deleted).ToList();
+        }
+
+        public Context GetContext(int id)
+        {
+            var target = GetTweet(id);
+            var ancestorIds = GetAncestors(target);
+            var childIds = GetChildren(target);
+
+            var before = _context.Tweets
+                .Include(t => t.Author)
+                .Where(t => ancestorIds.Contains(t.Id) && !t.Deleted)
+                .ToList();
+            before.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
+
+            var after = _context.Tweets
+                .Include(t => t.Author)
+                .Where(t => childIds.Contains(t.Id) && !t.Deleted)
+                .ToList();
+            after.Sort((a, b) => DateTime.Compare(b.Posted, a.Posted));
+
+            return new Context()
+            {
+                Target = target,
+                Before = before,
+                After = after,
+            };
         }
     }
 }

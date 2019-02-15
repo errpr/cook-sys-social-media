@@ -9,7 +9,7 @@ namespace DotnetAssessmentSocialMedia.Dtos
     public class TweetDto
     {
         public int Id { get; set; }
-        public User Author { get; set; }
+        public UserResponseDto Author { get; set; }
         public string Content { get; set; }
         public int? InReplyTo { get; set; }
         public int? RepostOf { get; set; }

@@ -83,7 +83,7 @@ namespace DotnetAssessmentSocialMedia.Controllers
         }
 
         // POST api/users/@{username}/follow
-        [HttpPost("@{username}/follow")]
+        [HttpPost("@{usernameToFollow}/follow")]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -96,7 +96,7 @@ namespace DotnetAssessmentSocialMedia.Controllers
         }
 
         // POST api/users/@{username}/unfollow
-        [HttpPost("@{username}/unfollow")]
+        [HttpPost("@{usernameToUnfollow}/unfollow")]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         public ActionResult UnfollowUser(string usernameToUnfollow, [FromBody] CredentialsDto credentialsDto)

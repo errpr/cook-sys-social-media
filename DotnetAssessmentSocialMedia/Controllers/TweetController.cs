@@ -121,7 +121,8 @@ namespace DotnetAssessmentSocialMedia.Controllers
         [ProducesResponseType(404)]
         public ActionResult<ContextDto> GetContext(int id)
         {
-            return NotFound();
+            var context = _tweetService.GetContext(id);
+            return _mapper.Map<ContextDto>(context);
         }
 
         [HttpGet("{id}/replies")]
